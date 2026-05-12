@@ -1,6 +1,6 @@
-const CLAUDE_API_KEY = "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";
-const GMAIL_USER = "hillarycjuan@gmail.com";
-const SHEET_ID = "17Vr18FAnN9vBf9D1TJPRUr-ze27whtSJwgPy4L9Nrc0";
+const CLAUDE_API_KEY = "YOUR_CLAUDE_API_KEY";
+const GMAIL_USER = "YOUR_EMAIL@gmail.com";
+const SHEET_ID = "YOUR_SHEET_ID";
 const SHEET_NAME = "Responses";
 
 const QUESTIONS = [
