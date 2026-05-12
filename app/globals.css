@@ -1,0 +1,8 @@
+* { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: Georgia, serif; background: #fffdf5; color: #1a1a18; }
+input, textarea, select, button { font-family: Georgia, serif; }
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr !important; }
+  .grid-3 { grid-template-columns: 1fr 1fr !important; }
+  .hide-mobile { display: none !important; }
+}
