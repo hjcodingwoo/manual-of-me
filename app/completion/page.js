@@ -65,50 +65,49 @@ function CompletionContent() {
         </div>
 
         <div style={{background:'white', borderRadius:'12px', border:'1px solid #e8e4da', padding:'1.5rem', marginBottom:'1.5rem'}}>
-          <h2 style={{fontSize:'13px', fontWeight:'bold', color:'#1a1a18', textTransform:'uppercase', letterSpacing:'0.5px', margin:'0 0 1rem'}}>View your profile</h2>
+          <h2 style={{fontSize:'13px', fontWeight:'bold', color:'#1a1a18', textTransform:'uppercase', letterSpacing:'0.5px', margin:'0 0 1rem'}}>Your profile</h2>
           <button onClick={() => router.push(`/profile/${encodeURIComponent(name)}`)}
-            style={{width:'100%', padding:'0.875rem', background:'linear-gradient(135deg,#FFBF00,#FF7900)', color:'#1a1a18', border:'none', borderRadius:'8px', fontSize:'15px', fontWeight:'bold', cursor:'pointer', marginBottom:'0.75rem'}}>
+            style={{width:'100%', padding:'0.875rem', background:'#FF7900', color:'white', border:'none', borderRadius:'8px', fontSize:'15px', fontWeight:'bold', cursor:'pointer', marginBottom:'0.75rem'}}>
             View My Profile →
           </button>
-          <p style={{fontSize:'12px', color:'#aaa', margin:'0 0 0.75rem'}}>or share this link with your team:</p>
-          <div style={{display:'flex', gap:'8px', alignItems:'center', background:'#fffbf0', padding:'0.75rem', borderRadius:'8px', border:'1px solid #f9e8cc', marginBottom:'0.5rem'}}>
+          <p style={{fontSize:'12px', color:'#aaa', margin:'0 0 0.5rem'}}>Share this link with your team:</p>
+          <div style={{display:'flex', gap:'8px', alignItems:'center', background:'#fffbf0', padding:'0.75rem', borderRadius:'8px', border:'1px solid #f9e8cc', marginBottom:'1.25rem'}}>
             <span style={{flex:1, fontSize:'12px', fontFamily:'monospace', color:'#1a1a18', wordBreak:'break-all'}}>{profileUrl}</span>
             <button onClick={handleCopy}
               style={{padding:'0.4rem 0.75rem', background:'white', border:'1px solid #ddd', borderRadius:'6px', fontSize:'12px', cursor:'pointer', fontWeight:'bold', flexShrink:0}}>
-              {copied ? '✓' : '🔗'}
+              {copied ? '✓ Copied' : '🔗 Copy'}
             </button>
           </div>
-          <p style={{fontSize:'11px', color:'#aaa', margin:0}}>No password needed to view</p>
-        </div>
-
-        <div style={{background:'white', borderRadius:'12px', border:'1px solid #e8e4da', padding:'1.5rem', marginBottom:'1.5rem'}}>
-          <h2 style={{fontSize:'13px', fontWeight:'bold', color:'#1a1a18', textTransform:'uppercase', letterSpacing:'0.5px', margin:'0 0 0.75rem'}}>Email a copy</h2>
-          {email && (
-            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0.75rem', background:'#f9f9f9', borderRadius:'8px', marginBottom:'0.75rem'}}>
-              <span style={{fontSize:'13px', color:'#666'}}>{email}</span>
-              {sentEmails.includes(email) ? (
+          <div style={{borderTop:'1px solid #f0ede4', paddingTop:'1.25rem'}}>
+            <p style={{fontSize:'13px', fontWeight:'bold', color:'#1a1a18', margin:'0 0 0.75rem'}}>Email a copy</p>
+            {email && (
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0.75rem', background:'#f9f9f9', borderRadius:'8px', marginBottom:'0.75rem'}}>
+                <span style={{fontSize:'13px', color:'#666'}}>{email}</span>
+                {sentEmails.includes(email) ? (
+                  <span style={{fontSize:'12px', color:'#4a9a4a', fontWeight:'bold'}}>✓ Sent</span>
+                ) : (
+                  <button onClick={() => sendEmail(email)} disabled={sendingEmail === email}
+                    style={{padding:'0.4rem 0.75rem', background: sendingEmail === email ? '#e8e4da' : '#1a1a18', color: sendingEmail === email ? '#aaa' : '#FFBF00', border:'none', borderRadius:'6px', fontSize:'12px', fontWeight:'bold', cursor:'pointer'}}>
+                    {sendingEmail === email ? '...' : 'Send'}
+                  </button>
+                )}
+              </div>
+            )}
+            {sentEmails.filter(e => e !== email).map(e => (
+              <div key={e} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0.75rem', background:'#f9f9f9', borderRadius:'8px', marginBottom:'0.75rem'}}>
+                <span style={{fontSize:'13px', color:'#666'}}>{e}</span>
                 <span style={{fontSize:'12px', color:'#4a9a4a', fontWeight:'bold'}}>✓ Sent</span>
-              ) : (
-                <button onClick={() => sendEmail(email)} disabled={sendingEmail === email}
-                  style={{padding:'0.4rem 0.75rem', background: sendingEmail === email ? '#e8e4da' : '#1a1a18', color: sendingEmail === email ? '#aaa' : '#FFBF00', border:'none', borderRadius:'6px', fontSize:'12px', fontWeight:'bold', cursor:'pointer'}}>
-                  {sendingEmail === email ? '...' : 'Send'}
-                </button>
-              )}
+              </div>
+            ))}
+            <div style={{display:'flex', gap:'8px', marginBottom:'0.5rem'}}>
+              <input type="email" placeholder="Add another email" value={extraEmail} onChange={e => setExtraEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendEmail(extraEmail)}
+                style={{flex:1, padding:'0.75rem', border:'1px solid #ddd', borderRadius:'8px', fontSize:'13px', outline:'none'}} />
+              <button onClick={() => sendEmail(extraEmail)} disabled={sendingEmail || !extraEmail.trim()}
+                style={{padding:'0.75rem 1rem', background: extraEmail.trim() ? '#1a1a18' : '#e8e4da', color: extraEmail.trim() ? '#FFBF00' : '#aaa', border:'none', borderRadius:'8px', fontSize:'13px', fontWeight:'bold', cursor: extraEmail.trim() ? 'pointer' : 'not-allowed', flexShrink:0}}>
+                {sendingEmail === extraEmail ? '...' : 'Send'}
+              </button>
             </div>
-          )}
-          {sentEmails.filter(e => e !== email).map(e => (
-            <div key={e} style={{display:'flex', justifyContent:'space-between', alignItems:'center', padding:'0.75rem', background:'#f9f9f9', borderRadius:'8px', marginBottom:'0.75rem'}}>
-              <span style={{fontSize:'13px', color:'#666'}}>{e}</span>
-              <span style={{fontSize:'12px', color:'#4a9a4a', fontWeight:'bold'}}>✓ Sent</span>
-            </div>
-          ))}
-          <div style={{display:'flex', gap:'8px'}}>
-            <input type="email" placeholder="Add another email" value={extraEmail} onChange={e => setExtraEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendEmail(extraEmail)}
-              style={{flex:1, padding:'0.75rem', border:'1px solid #ddd', borderRadius:'8px', fontSize:'13px', outline:'none'}} />
-            <button onClick={() => sendEmail(extraEmail)} disabled={sendingEmail || !extraEmail.trim()}
-              style={{padding:'0.75rem 1rem', background: extraEmail.trim() ? '#1a1a18' : '#e8e4da', color: extraEmail.trim() ? '#FFBF00' : '#aaa', border:'none', borderRadius:'8px', fontSize:'13px', fontWeight:'bold', cursor: extraEmail.trim() ? 'pointer' : 'not-allowed', flexShrink:0}}>
-              {sendingEmail === extraEmail ? '...' : 'Send'}
-            </button>
+            <p style={{fontSize:'11px', color:'#aaa', margin:0}}>Check your junk or spam folder if you don't see it.</p>
           </div>
         </div>
 
