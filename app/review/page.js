@@ -40,8 +40,9 @@ export default function ReviewPage() {
 
   const updateRefined = (idx, text) => setResponses(prev => prev.map((r, i) => i === idx ? { ...r, refined: text } : r))
   const revertToOriginal = (idx) => {
-    setResponses(prev => prev.map((r, i) => i === idx ? { ...r, refined: '' } : r))
-    setRefineStatus(prev => prev.map((s, i) => i === idx ? 'idle' : s))
+    const orig = originals[idx] || ''
+    setResponses(prev => prev.map((r, i) => i === idx ? { ...r, refined: orig } : r))
+    setRefineStatus(prev => prev.map((s, i) => i === idx ? 'reverted' : s))
   }
 
   const handleRefineAll = async () => {
@@ -129,7 +130,7 @@ export default function ReviewPage() {
 
         <div style={{ textAlign:'center', marginBottom:'1.5rem' }}>
           <h1 style={{ fontSize:'clamp(22px,4vw,30px)', fontWeight:'bold', margin:'0 0 0.25rem' }}>Review Your Manual</h1>
-          <p style={{ fontSize:'14px', color:'#888', margin:0 }}>Refine with Claude, edit if needed, then publish.</p>
+          <p style={{ fontSize:'14px', color:'#888', margin:0 }}>Refine Q1–8 with Claude, edit if needed, then publish.</p>
         </div>
 
         {errorMsg && <div style={{ background:'#fff0f0', border:'1px solid #ffcccc', borderRadius:'8px', padding:'1rem', marginBottom:'1rem', fontSize:'14px', color:'#cc3300' }}>⚠️ {errorMsg}</div>}
@@ -156,19 +157,25 @@ export default function ReviewPage() {
                   </div>
                   <div style={{ display:'flex', gap:'4px', flexShrink:0 }}>
                     {status === 'done' && <span style={{ fontSize:'10px', background:'#FF7900', color:'white', padding:'2px 6px', borderRadius:'10px' }}>refined</span>}
+                    {status === 'reverted' && <span style={{ fontSize:'10px', background:'#aaa', color:'white', padding:'2px 6px', borderRadius:'10px' }}>original</span>}
                     {status === 'error' && <span style={{ fontSize:'10px', background:'#cc3300', color:'white', padding:'2px 6px', borderRadius:'10px' }}>error</span>}
-                    {status === 'done' && <button onClick={() => revertToOriginal(idx)}
+                    {(status === 'done') && <button onClick={() => revertToOriginal(idx)}
                       style={{ fontSize:'11px', padding:'2px 6px', background:'white', border:'1px solid #FF7900', borderRadius:'5px', cursor:'pointer', color:'#FF7900' }}>↩ un-claude</button>}
-                    <button onClick={() => { sessionStorage.setItem('editIndex', String(idx)); router.push('/form') }}
-                      style={{ fontSize:'11px', padding:'2px 6px', background:'white', border:'1px solid #ddd', borderRadius:'5px', cursor:'pointer', color:'#666' }}>Edit</button>
+
                   </div>
                 </div>
-                {status === 'done'
-                  ? <textarea value={r.refined} onChange={e => updateRefined(idx, e.target.value)}
-                      style={{ width:'100%', minHeight:'80px', padding:'8px', background:'#fffbf0', border:'1px solid #f0e8d8', borderRadius:'6px', fontSize:'13px', lineHeight:1.6, resize:'vertical', outline:'none', color:'#1a1a18', fontFamily:'Georgia,serif' }} />
-                  : <p style={{ fontSize:'13px', lineHeight:1.6, color: displayText ? '#1a1a18' : '#ccc', margin:0, fontStyle: displayText ? 'normal' : 'italic', whiteSpace:'pre-wrap' }}>
-                      {status === 'refining' ? (displayText || 'Refining...') : (displayText || 'Not answered')}
-                    </p>
+                {status === 'refining'
+                  ? <p style={{ fontSize:'13px', lineHeight:1.6, color:'#aaa', margin:0, fontStyle:'italic' }}>Refining...</p>
+                  : <textarea
+                      value={status === 'done' || status === 'reverted' ? (r.refined || '') : (r.raw || '')}
+                      onChange={e => {
+                        const val = e.target.value
+                        if (status === 'done' || status === 'reverted') updateRefined(idx, val)
+                        else { const updated = responses.map((x,i)=>i===idx?{...x,raw:val}:x); setResponses(updated) }
+                      }}
+                      placeholder="no answer"
+                      style={{ width:'100%', minHeight:'80px', padding:'8px', background: status === 'done' ? '#fffbf0' : status === 'reverted' ? '#f0f8ff' : 'white', border: status === 'done' ? '1px solid #f0e8d8' : '1px solid #e8e4da', borderRadius:'6px', fontSize:'13px', lineHeight:1.6, resize:'vertical', outline:'none', color:'#1a1a18', fontFamily:'Georgia,serif' }}
+                    />
                 }
               </div>
             )

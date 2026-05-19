@@ -118,7 +118,7 @@ function sendManualEmail(name, email, responses) {
   responses.forEach(function(resp, i) {
     if (!QUESTIONS[i]) return;
     body += '<div style="margin-bottom:1.5rem"><h3 style="font-size:12px;font-weight:bold;color:#FF7900;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 0.5rem">' + (i+1) + '. ' + QUESTIONS[i] + '</h3>';
-    body += '<p style="font-size:14px;line-height:1.7;margin:0">' + (resp || '<em style="color:#ccc">Not answered</em>') + '</p></div>';
+    body += '<p style="font-size:14px;line-height:1.7;margin:0">' + (resp || 'no answer') + '</p></div>';
   });
   body += '</div>';
   body += '<div style="text-align:center;margin-top:1.5rem"><a href="https://themanualofme.vercel.app/profile/' + encodeURIComponent(name) + '" style="display:inline-block;padding:0.75rem 1.5rem;background:#FF7900;color:white;border-radius:8px;text-decoration:none;font-weight:bold">View My Profile</a></div>';

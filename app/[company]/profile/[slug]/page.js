@@ -100,7 +100,7 @@ export default function CompanyProfilePage() {
           {responses.map((response,idx)=>(
             <div key={idx} style={{background:'white',borderRadius:'12px',border:'1px solid #e8e4da',padding:'1.25rem'}}>
               <h3 style={{fontSize:'11px',fontWeight:'bold',color:primary,textTransform:'uppercase',letterSpacing:'0.5px',margin:'0 0 0.75rem'}}>{idx+1}. {QUESTIONS[idx]}</h3>
-              <p style={{fontSize:'14px',lineHeight:1.7,color:response?'#1a1a18':'#ccc',margin:0,fontStyle:response?'normal':'italic'}}>{response||'Not answered'}</p>
+              <p style={{fontSize:'14px',lineHeight:1.7,color:response?'#1a1a18':'#ccc',margin:0,fontStyle:'normal'}}>{response||'no answer'}</p>
             </div>
           ))}
         </div>
