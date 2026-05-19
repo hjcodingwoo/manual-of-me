@@ -45,7 +45,8 @@ export default function LandingPage() {
       const nameExists = data.responses && Object.keys(data.responses).length > 0
       if (nameExists) {
         // Suggest an alternative name
-        const alt = name.trim() + '2'
+        const code = Math.floor(100 + Math.random() * 900)
+        const alt = name.trim() + code
         setSuggestedName(alt)
         setShowOverride(true)
         setChecking(false)

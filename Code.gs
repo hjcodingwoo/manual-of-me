@@ -12,8 +12,7 @@ const QUESTIONS = [
   "Things I struggle with",
   "Things I love",
   "Other things to know about me",
-  "My favorites: food, TV show/movie, city/country",
-  "Hot take",
+  "My favorites",
   "Guilty pleasure",
   "Dietary restrictions",
   "Hobbies",
@@ -45,13 +44,9 @@ function doPost(e) {
 }
 
 function refineText(rawText, questionTitle) {
-  const prompt = `You are a professional writer helping someone articulate their working style for their team.
+  const prompt = `Clean up these raw notes into 2-3 clear sentences. Keep the person's exact words where possible. Do not add warmth, emotion, or personality that isn't already in the input. Do not interpret — only clarify and tighten. Output only the sentences, no preamble, no introduction.
 
-Question: ${questionTitle}
-
-Transform these raw notes into a warm, authentic paragraph (2-3 sentences, ~80 words max). Preserve their voice. Be specific. No jargon.
-
-Output ONLY the paragraph. No preamble.
+Question context: ${questionTitle}
 
 Raw notes:
 ${rawText}`;

@@ -12,6 +12,7 @@ const API_URL = process.env.NEXT_PUBLIC_APPS_SCRIPT_URL
 
 export default function ReviewPage() {
   const [responses, setResponses] = useState(Array(13).fill(null).map(() => ({ raw:'', refined:'' })))
+  const [originals, setOriginals] = useState({})
   const [userName, setUserName] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [refining, setRefining] = useState(false)
@@ -27,10 +28,21 @@ export default function ReviewPage() {
     const saved = sessionStorage.getItem('responses')
     if (!name || !saved) { router.push('/'); return }
     setUserName(name); setUserEmail(email)
-    try { setResponses(JSON.parse(saved)) } catch(e) { router.push('/') }
+    try {
+      const parsed = JSON.parse(saved)
+      setResponses(parsed)
+      // Store originals for revert
+      const orig = {}
+      parsed.forEach((r, i) => { orig[i] = r.raw || '' })
+      setOriginals(orig)
+    } catch(e) { router.push('/') }
   }, [])
 
   const updateRefined = (idx, text) => setResponses(prev => prev.map((r, i) => i === idx ? { ...r, refined: text } : r))
+  const revertToOriginal = (idx) => {
+    setResponses(prev => prev.map((r, i) => i === idx ? { ...r, refined: '' } : r))
+    setRefineStatus(prev => prev.map((s, i) => i === idx ? 'idle' : s))
+  }
 
   const handleRefineAll = async () => {
     if (!API_URL) { setErrorMsg('No API URL configured'); return }
@@ -38,7 +50,7 @@ export default function ReviewPage() {
     const newStatus = Array(13).fill('idle')
     for (let i = 0; i < 13; i++) {
       const raw = responses[i]?.raw || ''
-      if (!raw.trim()) { newStatus[i] = 'skip'; setRefineStatus([...newStatus]); continue }
+      if (!raw.trim() || i >= 8) { newStatus[i] = 'skip'; setRefineStatus([...newStatus]); continue }
       newStatus[i] = 'refining'; setRefineStatus([...newStatus])
       try {
         const res = await fetch(API_URL, {
@@ -145,6 +157,8 @@ export default function ReviewPage() {
                   <div style={{ display:'flex', gap:'4px', flexShrink:0 }}>
                     {status === 'done' && <span style={{ fontSize:'10px', background:'#FF7900', color:'white', padding:'2px 6px', borderRadius:'10px' }}>refined</span>}
                     {status === 'error' && <span style={{ fontSize:'10px', background:'#cc3300', color:'white', padding:'2px 6px', borderRadius:'10px' }}>error</span>}
+                    {status === 'done' && <button onClick={() => revertToOriginal(idx)}
+                      style={{ fontSize:'11px', padding:'2px 6px', background:'white', border:'1px solid #FF7900', borderRadius:'5px', cursor:'pointer', color:'#FF7900' }}>↩ un-claude</button>}
                     <button onClick={() => { sessionStorage.setItem('editIndex', String(idx)); router.push('/form') }}
                       style={{ fontSize:'11px', padding:'2px 6px', background:'white', border:'1px solid #ddd', borderRadius:'5px', cursor:'pointer', color:'#666' }}>Edit</button>
                   </div>
